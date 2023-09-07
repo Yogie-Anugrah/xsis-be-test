@@ -1,6 +1,4 @@
 "use strict";
-// use db.ts to connect to database and use movies.service.ts to create query to database
-// create acoring the routes in routes.ts
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMovieQuery = exports.updateMovieQuery = exports.insertMovieQuery = exports.selectMovieByIdQuery = exports.selectAllMoviesQuery = void 0;
 const db_1 = require("../db");
 const selectAllMoviesQuery = () => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield db_1.dbConnection.connect();
     try {
-        const result = yield db_1.pg.query('SELECT * FROM movies');
+        const result = yield client.query('SELECT * FROM movies');
         return result.rows;
     }
     catch (err) {
@@ -25,8 +24,9 @@ const selectAllMoviesQuery = () => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.selectAllMoviesQuery = selectAllMoviesQuery;
 const selectMovieByIdQuery = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield db_1.dbConnection.connect();
     try {
-        const result = yield db_1.pg.query('SELECT * FROM movies WHERE id = $1', [id]);
+        const result = yield client.query('SELECT * FROM movies WHERE id = $1', [id]);
         return result.rows;
     }
     catch (err) {
@@ -35,9 +35,10 @@ const selectMovieByIdQuery = (id) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.selectMovieByIdQuery = selectMovieByIdQuery;
-const insertMovieQuery = (title, year, rating, genre) => __awaiter(void 0, void 0, void 0, function* () {
+const insertMovieQuery = (title, year, rating, genre, image) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield db_1.dbConnection.connect();
     try {
-        const result = yield db_1.pg.query('INSERT INTO movies (title, year, rating, genre) VALUES ($1, $2, $3, $4) RETURNING *', [title, year, rating, genre]);
+        const result = yield client.query('INSERT INTO movies (title, year, rating, genre) VALUES ($1, $2, $3, $4, $5) RETURNING *', [title, year, rating, genre, image]);
         return result.rows;
     }
     catch (err) {
@@ -46,9 +47,10 @@ const insertMovieQuery = (title, year, rating, genre) => __awaiter(void 0, void 
     }
 });
 exports.insertMovieQuery = insertMovieQuery;
-const updateMovieQuery = (id, title, year, rating, genre) => __awaiter(void 0, void 0, void 0, function* () {
+const updateMovieQuery = (id, title, year, rating, genre, image) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield db_1.dbConnection.connect();
     try {
-        const result = yield db_1.pg.query('UPDATE movies SET title = $1, year = $2, rating = $3, genre = $4 WHERE id = $5 RETURNING *', [title, year, rating, genre, id]);
+        const result = yield client.query('UPDATE movies SET title = $1, year = $2, rating = $3, genre = $4, image = $5 WHERE id = $6 RETURNING *', [title, year, rating, genre, image, id]);
         return result.rows;
     }
     catch (err) {
@@ -58,8 +60,9 @@ const updateMovieQuery = (id, title, year, rating, genre) => __awaiter(void 0, v
 });
 exports.updateMovieQuery = updateMovieQuery;
 const deleteMovieQuery = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const client = yield db_1.dbConnection.connect();
     try {
-        const result = yield db_1.pg.query('DELETE FROM movies WHERE id = $1 RETURNING *', [id]);
+        const result = yield client.query('DELETE FROM movies WHERE id = $1 RETURNING *', [id]);
         return result.rows;
     }
     catch (err) {
